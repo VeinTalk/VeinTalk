@@ -46,8 +46,19 @@ jobs:
       - name: Check release
         id: checkRelease
         run: |
+          echo "version ${{ env.VERSION }}"
           echo "::set-output name=RELEASE_STATUS::$(curl -I -m 10 -o /dev/null -s -w %{http_code} https://github.com/VeinTalk/VeinTalk/releases/tag/v${{ env.VERSION }})"
-      - run: |
-          echo "RELEASE_STATUS=${{ steps.checkRelease.outputs.RELEASE_STATUS }}" >> $GITHUB_ENV
-          echo ${{ env.VERSION }}
-          echo ${{ env.RELEASE_STATUS }}
+ 
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        if: ${{ steps.checkRelease.outputs.RELEASE_STATUS == 404 }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          body: ${{ steps.changelog.outputs.notes }}
+          draft: true # 是否是草稿
+          prerelease: false # 是否是预发布
+
