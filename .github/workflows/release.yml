@@ -19,9 +19,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
+          path: './code'  # 指定源码存放目录
           repository: ${{ secrets.VEIN_TALK_CODE }}
           token: ${{ secrets.VEIN_TALK_ACCESS_TOKEN }}
           # ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - run: |
           ls ./ -l
+          ls ./code/* -l
