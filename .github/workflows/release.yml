@@ -12,18 +12,25 @@ jobs:
   code:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - run: |
-          ls ./ -l
-      - name: Checkout Code
+      
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: './code'  # 指定源码存放目录
           repository: ${{ secrets.VEIN_TALK_CODE }}
           token: ${{ secrets.VEIN_TALK_ACCESS_TOKEN }}
           # ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # path: './code'  # 指定源码存放目录
+          fetch-depth: 0  # 获取完整提交历史
+      
+      
+      # 安装 git-cliff（无需配置的预编译二进制文件）
+      - name: Setup git-cliff
+        run: |
+          curl -LSs https://github.com/orhun/git-cliff/releases/download/v1.3.0/git-cliff-1.3.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          echo "$(pwd)" >> $GITHUB_PATH
 
-      - run: |
-          ls ./ -l
-          ls ./code/* -l
+      # 生成 CHANGELOG.md
+      - name: Generate changelog
+        run: |
+          git-cliff --output CHANGELOG.md
+          cat CHANGELOG.md  # 预览内容
