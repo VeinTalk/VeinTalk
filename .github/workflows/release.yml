@@ -12,13 +12,16 @@ jobs:
   code:
     runs-on: ubuntu-20.04
     steps:
-      # 下载源码
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: |
+          ls ./ -l
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
-          repository: 'VeinTalk/VeinTalkCode'
+          repository: ${{ secrets.VEIN_TALK_CODE }}
           token: ${{ secrets.VEIN_TALK_ACCESS_TOKEN }}
           # ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
 
       - run: |
           ls ./ -l
